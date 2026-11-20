@@ -65,3 +65,6 @@ class Painel(BaseModel):
     total: int
     por_status: dict[str, int]
     atrasados: int
+    por_prioridade: dict[str, int] = {}
+    abertos_criticos: int = 0
+    concluidos: int = 0

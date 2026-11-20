@@ -92,3 +92,41 @@ def test_painel(cliente, contas):
     abrir(cliente, contas, prioridade="baixa")
     p = cliente.get("/chamados/painel", headers=contas["carla"]["headers"]).json()
     assert p["total"] == 2 and p["por_status"] == {"aberto": 2} and p["atrasados"] == 0
+
+
+def test_busca_por_titulo_e_descricao(cliente, contas):
+    abrir(cliente, contas, titulo="Impressora travada", descricao="Papel preso")
+    abrir(cliente, contas, titulo="Sem rede", descricao="A IMPRESSORA do andar não responde")
+    abrir(cliente, contas, titulo="Monitor", descricao="Tela piscando")
+    tec = contas["carla"]["headers"]
+    achados = cliente.get("/chamados", headers=tec, params={"busca": "impressora"}).json()
+    assert sorted(c["titulo"] for c in achados) == ["Impressora travada", "Sem rede"]  # título e descrição, sem diferenciar maiúsculas
+    assert cliente.get("/chamados", headers=tec, params={"busca": "inexistente"}).json() == []
+
+
+def test_busca_trata_porcentagem_e_underscore_como_texto(cliente, contas):
+    abrir(cliente, contas, titulo="Disco 100% cheio")
+    abrir(cliente, contas, titulo="Disco quase cheio")
+    tec = contas["carla"]["headers"]
+    assert len(cliente.get("/chamados", headers=tec, params={"busca": "%"}).json()) == 1
+    assert cliente.get("/chamados", headers=tec, params={"busca": "_"}).json() == []
+
+
+def test_busca_do_solicitante_so_enxerga_os_proprios(cliente, contas):
+    abrir(cliente, contas, quem="ana", titulo="Teclado quebrado")
+    abrir(cliente, contas, quem="carla", titulo="Teclado do servidor")
+    achados = cliente.get("/chamados", headers=contas["ana"]["headers"], params={"busca": "teclado"}).json()
+    assert [c["titulo"] for c in achados] == ["Teclado quebrado"]
+
+
+def test_painel_com_prioridade_criticos_e_concluidos(cliente, contas):
+    tec = contas["carla"]["headers"]
+    abrir(cliente, contas, prioridade="critica")
+    abrir(cliente, contas, prioridade="critica")
+    abrir(cliente, contas, prioridade="baixa")
+    cid = abrir(cliente, contas, prioridade="media").json()["id"]
+    cliente.patch(f"/chamados/{cid}/atribuir", headers=tec, json={"tecnico_id": contas["carla"]["id"]})
+    cliente.patch(f"/chamados/{cid}/status", headers=tec, json={"status": "resolvido"})
+    p = cliente.get("/chamados/painel", headers=tec).json()
+    assert p["por_prioridade"] == {"critica": 2, "baixa": 1, "media": 1}
+    assert p["abertos_criticos"] == 2 and p["concluidos"] == 1

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.auth.dependencias import Pessoa, usuario_atual
@@ -18,8 +18,9 @@ def abrir_chamado(dados: ChamadoCriar, usuario: Pessoa = Depends(usuario_atual),
 
 @router.get("", response_model=list[ChamadoSaida])
 def listar_chamados(status: Status | None = None, tecnico_id: int | None = None,
+                    busca: str | None = Query(default=None, max_length=100),
                     usuario: Pessoa = Depends(usuario_atual), db: Session = Depends(get_db)):
-    return servico.listar(db, usuario, status, tecnico_id)
+    return servico.listar(db, usuario, status, tecnico_id, busca.strip() if busca else None)
 
 
 @router.get("/painel", response_model=Painel)

@@ -23,6 +23,19 @@ acesso por link) e cole o link no topo do `README.md`. Fale com as suas palavras
 | 8 | 5:10–5:40 | `curl -i http://localhost:8000/chamados` (401); como **ana@empresa.com**, `GET /chamados/2` (404, é do Bruno); depois `python scripts/teste_fumaca.py` | **Segurança em camadas:** cada serviço confere o token sozinho, o gateway não é a única barreira; o token da pessoa é repassado entre serviços. |
 | 9 | 5:40–6:00 | `cd chamados && pytest -q` e o README ("Ficou melhor / Ficou mais difícil") | Testes por serviço + CI. Feche com o **trade-off honesto**: ganhei deploy independente e falha isolada; perdi simplicidade (rede, consistência sem FK, mais peças). |
 
+### Passo extra (melhorias de criatividade) — encaixe entre os passos 6 e 7, uns 40 s
+
+Mostre na tela, em http://localhost:8000, logado como **carla@empresa.com**:
+
+1. **Busca de chamados:** digite "impressora" no campo de busca; a lista filtra sozinha (a busca roda no serviço de
+   Chamados, `GET /chamados?busca=...`, no título e na descrição; o `%` e o `_` são tratados como texto comum).
+   Combine com o filtro de status.
+2. **Painel mais rico:** os 6 indicadores (agora com **Críticos abertos**) e as etiquetas de **chamados por prioridade**.
+   Vêm de `GET /chamados/painel`, que ganhou `por_prioridade`, `abertos_criticos` e `concluidos`.
+3. **Tema escuro:** clique no botão ☀️/🌙 do topo; a escolha fica salva só no seu navegador.
+4. Diga que cada melhoria tem **teste automatizado** (`cd chamados && pytest -q`, 45 testes) e que nada disso mudou a
+   segurança: o texto continua escapado na tela e o limite da busca é de 100 caracteres (acima disso a API responde 422).
+
 Se passar de 6 minutos, corte o passo 8 (deixe só o `teste_fumaca.py` rodando) ou encurte o passo 2.
 
 ## Checklist do que dizer (é isso que o professor quer ouvir)

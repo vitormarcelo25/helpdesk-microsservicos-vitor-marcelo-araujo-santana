@@ -28,3 +28,14 @@ header .usuario{display:flex;gap:10px;align-items:center}header .usuario button{
 
 .servicos{display:flex;gap:6px;flex-wrap:wrap}.svc{display:inline-flex;align-items:center;gap:5px;background:#1d2d52;border-radius:10px;padding:1px 9px;font-size:12px;opacity:1!important}
 .svc::before{content:"";width:8px;height:8px;border-radius:50%;background:#7a869a}.svc.no-ar::before{background:#3ddc84}.svc.fora::before{background:#ff5d5d}.svc.fora{color:#ffb4b4}
+.kpis{grid-template-columns:repeat(6,1fr)}
+@media(max-width:700px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.filtros{display:flex;gap:8px;margin-bottom:8px}.filtros input{flex:1}.filtros select{width:auto}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.chip{background:#eef2f8;border-radius:10px;padding:1px 9px;font-size:12px}
+header .usuario #tema{background:#2b3a5c;padding:4px 8px}
+[data-theme=dark]{--bg:#0f1420;--card:#192032;--tx:#e6e9f0;--mut:#9aa4b8;--line:#2c3550;--pri:#5b9bff;--ok:#4cc38a;--warn:#e0a84a;--bad:#ff7b6b}
+[data-theme=dark] .chip,[data-theme=dark] button.sec,[data-theme=dark] .contas code{background:#232c44;color:var(--tx)}
+[data-theme=dark] .aviso{background:#1f2840}
+[data-theme=dark] .s-aberto{background:#1d2b4a}[data-theme=dark] .s-em_atendimento{background:#3a2e17}[data-theme=dark] .s-resolvido{background:#17352a}[data-theme=dark] .s-fechado{background:#262d3f}
+[data-theme=dark] input,[data-theme=dark] select,[data-theme=dark] textarea{background:#111827;color:var(--tx)}
+[data-theme=dark] button{color:#0b1020}

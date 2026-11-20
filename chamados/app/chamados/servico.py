@@ -88,9 +88,10 @@ def obter(db: Session, chamado_id: int, usuario: Pessoa) -> Chamado:
     return chamado
 
 
-def listar(db: Session, usuario: Pessoa, status: str | None = None, tecnico_id: int | None = None) -> list[Chamado]:
+def listar(db: Session, usuario: Pessoa, status: str | None = None, tecnico_id: int | None = None,
+           busca: str | None = None) -> list[Chamado]:
     solicitante_id = None if eh_equipe(usuario) else usuario.id
-    return repositorio.listar(db, status, tecnico_id, solicitante_id)
+    return repositorio.listar(db, status, tecnico_id, solicitante_id, busca)
 
 
 def atribuir(db: Session, chamado_id: int, tecnico_id: int, usuario: Pessoa) -> Chamado:
@@ -139,4 +140,13 @@ def painel(db: Session, usuario: Pessoa) -> dict:
     chamados = listar(db, usuario)
     agora = datetime.now()
     atrasados = sum(1 for c in chamados if c.status in ("aberto", "em_atendimento") and c.prazo_sla < agora)
-    return {"total": len(chamados), "por_status": dict(Counter(c.status for c in chamados)), "atrasados": atrasados}
+    # Melhoria: quantos chamados por prioridade e quantos dos já concluídos ficaram dentro do SLA
+    concluidos = [c for c in chamados if c.status in ("resolvido", "fechado")]
+    return {
+        "total": len(chamados),
+        "por_status": dict(Counter(c.status for c in chamados)),
+        "atrasados": atrasados,
+        "por_prioridade": dict(Counter(c.prioridade for c in chamados)),
+        "abertos_criticos": sum(1 for c in chamados if c.prioridade == "critica" and c.status in ("aberto", "em_atendimento")),
+        "concluidos": len(concluidos),
+    }

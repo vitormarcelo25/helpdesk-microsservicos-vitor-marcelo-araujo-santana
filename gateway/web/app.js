@@ -37,15 +37,18 @@ async function carregar() {
   const avisosDeFalha = [];
   const tentar = (caminho, padrao) => req("GET", caminho).catch((e) => { avisosDeFalha.push(e.message); return padrao; });
   const [lista, ativos, chamados, painel, avisos] = await Promise.all([
-    tentar("/usuarios", usuarios), tentar("/ativos", ativosConhecidos), tentar("/chamados", []),
+    tentar("/usuarios", usuarios), tentar("/ativos", ativosConhecidos), tentar("/chamados" + filtrosComoQuery(), []),
     tentar("/chamados/painel", { total: 0, por_status: {}, atrasados: 0 }), tentar("/notificacoes", []),
   ]);
   usuarios = lista;
   ativosConhecidos = ativos;  // se o Inventário cair, a lista continua na tela (e o erro aparece ao usá-la)
   const ps = painel.por_status;
   $("kpis").innerHTML = [["Total", painel.total], ["Abertos", ps.aberto || 0], ["Em atendimento", ps.em_atendimento || 0],
-    ["Resolvidos", (ps.resolvido || 0) + (ps.fechado || 0)], ["Atrasados", painel.atrasados]]
+    ["Resolvidos", (ps.resolvido || 0) + (ps.fechado || 0)], ["Atrasados", painel.atrasados], ["Críticos abertos", painel.abertos_criticos || 0]]
     .map(([t, v]) => `<div class="kpi"><small>${esc(t)}</small><b>${esc(v)}</b></div>`).join("");
+  const pp = painel.por_prioridade || {};
+  $("chips").innerHTML = ["critica", "alta", "media", "baixa"].filter((p) => pp[p])
+    .map((p) => `<span class="chip p-${esc(p)}">${esc(p)}: ${esc(pp[p])}</span>`).join("");
   const tecnicos = usuarios.filter((u) => u.perfil === "tecnico");
   $("lista").innerHTML = chamados.map((c) => `<tr>
     <td>${esc(c.id)}</td><td><b>${esc(c.titulo)}</b><br><small>${esc(nome(c.solicitante_id))}</small></td>
@@ -58,6 +61,31 @@ async function carregar() {
   $("erro").textContent = [...new Set(avisosDeFalha)].join(" ");
   $("ativo").innerHTML = `<option value="">Nenhum</option>` + ativos.map((a) => `<option value="${esc(a.id)}">${esc(a.patrimonio)} · ${esc(a.descricao)}</option>`).join("");
 }
+
+// Busca e filtro de status: viram parâmetros de GET /chamados (o filtro é feito no serviço de Chamados)
+function filtrosComoQuery() {
+  const p = new URLSearchParams();
+  const b = $("busca").value.trim();
+  if (b) p.set("busca", b);
+  if ($("filtro-status").value) p.set("status", $("filtro-status").value);
+  const q = p.toString();
+  return q ? "?" + q : "";
+}
+let temporizador = null;
+const recarregar = () => carregar().catch((e) => { $("erro").textContent = e.message; });
+$("busca").addEventListener("input", () => { clearTimeout(temporizador); temporizador = setTimeout(recarregar, 300); });
+$("filtro-status").addEventListener("change", recarregar);
+
+// Tema claro/escuro: a escolha fica só neste navegador (localStorage é opcional)
+function aplicarTema(t) {
+  document.documentElement.dataset.theme = t;
+  $("tema").textContent = t === "dark" ? "☀️" : "🌙";
+  try { localStorage.setItem("tema", t); } catch (e) {}
+}
+let temaInicial = "light";
+try { temaInicial = localStorage.getItem("tema") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"); } catch (e) {}
+aplicarTema(temaInicial);
+$("tema").addEventListener("click", () => aplicarTema(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
 
 function acoes(c, tecnicos) {
   const botao = (acao, texto, extra = "") => `<button type="button" data-acao="${acao}" data-id="${esc(c.id)}" ${extra}>${esc(texto)}</button>`;

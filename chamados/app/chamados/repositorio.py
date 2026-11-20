@@ -24,8 +24,14 @@ def buscar_por_id(db: Session, chamado_id: int) -> Chamado | None:
 
 
 def listar(db: Session, status: str | None = None, tecnico_id: int | None = None,
-           solicitante_id: int | None = None) -> list[Chamado]:
+           solicitante_id: int | None = None, busca: str | None = None) -> list[Chamado]:
     consulta = select(Chamado).order_by(Chamado.id)
+    if busca:
+        # Melhoria: busca por texto no título ou na descrição (sem diferenciar maiúsculas)
+        termo = busca.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+        consulta = consulta.where(
+            Chamado.titulo.ilike(f"%{termo}%", escape="\\") | Chamado.descricao.ilike(f"%{termo}%", escape="\\")
+        )
     if solicitante_id:
         consulta = consulta.where(Chamado.solicitante_id == solicitante_id)
     if status:

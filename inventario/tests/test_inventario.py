@@ -5,7 +5,7 @@ import jwt
 
 from app import config
 
-NOVO = {"patrimonio": "PAT-9", "tipo": "outro", "descricao": "X", "setor": "TI"}
+NOVO = {"patrimonio": "PAT-9", "tipo": "outro", "descricao": "Notebook X", "setor": "TI"}
 
 
 def test_rotas_exigem_login(cliente):

@@ -10,7 +10,7 @@
 <header>
   <div><b>HelpDesk TI</b> <span>· versão em microsserviços</span></div>
   <div class="servicos" id="servicos" aria-label="Estado dos serviços"></div>
-  <div class="usuario" id="barra" hidden><span id="quem"></span><button id="sair" type="button">Sair</button></div>
+  <div class="usuario"><button id="tema" type="button" aria-label="Alternar tema claro/escuro" title="Alternar tema">🌙</button><span id="barra" hidden><span id="quem"></span> <button id="sair" type="button">Sair</button></span></div>
 </header>
 
 <form class="card login" id="tela-login">
@@ -29,6 +29,14 @@
     <div class="kpis" id="kpis"></div>
     <div class="card">
       <h2>Chamados</h2>
+      <div class="filtros">
+        <input id="busca" type="search" maxlength="100" placeholder="Buscar no título ou na descrição…" aria-label="Buscar chamados">
+        <select id="filtro-status" aria-label="Filtrar por status">
+          <option value="">Todos os status</option><option value="aberto">Aberto</option><option value="em_atendimento">Em atendimento</option>
+          <option value="resolvido">Resolvido</option><option value="fechado">Fechado</option>
+        </select>
+      </div>
+      <div class="chips" id="chips"></div>
       <table><thead><tr><th>#</th><th>Chamado</th><th>Prioridade</th><th>Status</th><th>Técnico</th><th>Prazo (SLA)</th><th>Ações</th></tr></thead><tbody id="lista"></tbody></table>
       <div id="erro" class="erro"></div>
     </div>
