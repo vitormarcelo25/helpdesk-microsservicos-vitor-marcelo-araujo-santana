@@ -53,14 +53,22 @@ Abra um chamado, atribua a um técnico e resolva.
 
 ## Parte 5: Se um serviço cair (45 s)
 
-**Faça no terminal:** `docker compose stop inventario`
+**A ideia:** desligar um serviço de propósito e mostrar que o sistema não quebra inteiro.
+O serviço que vamos desligar é o **Inventário** (o que guarda a lista de equipamentos).
 
-**Mostre:** no sistema, os outros serviços continuam funcionando. Abrir um chamado **sem** equipamento funciona.
-Abrir **com** equipamento mostra um erro claro (503).
+**Passo a passo (deixe o terminal e o navegador lado a lado):**
 
-*"Um serviço caiu e o resto continua de pé. No sistema antigo, um problema derrubava tudo."*
-
-**Depois, religue:** `docker compose start inventario`
+1. No terminal, rode: `docker compose stop inventario`
+2. No navegador, espere uns 5 segundos. No topo, o botão **Inventário** fica **vermelho**. Os outros continuam verdes.
+   *"Desliguei o Inventário. Ele ficou vermelho, mas os outros continuam no ar."*
+3. Em "Abrir chamado", deixe o campo **Equipamento** em **Nenhum** e clique em **Abrir chamado**.
+   O chamado é criado normalmente.
+   *"Sem equipamento, o chamado abre normal, porque ele não precisa do Inventário."*
+4. Agora escolha um equipamento da lista e clique em **Abrir chamado** de novo.
+   Aparece uma **mensagem de erro em vermelho** (embaixo da tabela) dizendo que o serviço está indisponível.
+   *"Com equipamento, ele precisa do Inventário, que está fora. O sistema responde um erro claro, rápido, sem travar."*
+5. Feche com a frase: *"No sistema antigo, um problema assim derrubava tudo. Agora a falha fica isolada."*
+6. No terminal, religue: `docker compose start inventario` (em uns segundos o botão volta a ficar verde).
 
 ## Parte 6: Testes e conclusão (45 s)
 
