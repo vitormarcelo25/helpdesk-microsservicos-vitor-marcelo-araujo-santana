@@ -78,7 +78,7 @@ Termine com 3 frases curtas (pode falar do seu jeito):
 
 *"O lado bom: se um serviço quebra, o resto continua funcionando, e eu posso mexer em um serviço sem mexer nos outros.
 O lado ruim: ficou mais trabalhoso, porque agora são várias peças para subir e configurar, e não uma só.
-Se eu continuasse o projeto, trocaria o banco SQLite, que é simples, por um banco maior em cada serviço."*
+No geral, valeu a pena para entender como um sistema maior é organizado."*
 
 ---
 
