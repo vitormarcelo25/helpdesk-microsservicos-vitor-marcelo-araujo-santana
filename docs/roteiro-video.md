@@ -74,8 +74,11 @@ O serviço que vamos desligar é o **Inventário** (o que guarda a lista de equi
 
 **Faça no terminal:** `cd chamados` e depois `pytest -q` (mostre os testes passando).
 
-*"Ganhei: cada serviço pode ser mudado sozinho, e uma falha não derruba o resto. Perdi: ficou mais complicado,
-são mais peças e mais configuração. Se eu continuasse, trocaria o SQLite por um banco maior em cada serviço."*
+Termine com 3 frases curtas (pode falar do seu jeito):
+
+*"O lado bom: se um serviço quebra, o resto continua funcionando, e eu posso mexer em um serviço sem mexer nos outros.
+O lado ruim: ficou mais trabalhoso, porque agora são várias peças para subir e configurar, e não uma só.
+Se eu continuasse o projeto, trocaria o banco SQLite, que é simples, por um banco maior em cada serviço."*
 
 ---
 
