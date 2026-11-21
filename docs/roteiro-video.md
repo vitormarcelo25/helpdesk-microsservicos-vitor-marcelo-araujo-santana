@@ -72,13 +72,67 @@ O serviço que vamos desligar é o **Inventário** (o que guarda a lista de equi
 
 ## Parte 6: Testes e conclusão (45 s)
 
-**Faça no terminal:** `cd chamados` e depois `pytest -q` (mostre os testes passando).
+**Faça no terminal:** `cd chamados` e depois `.venv\Scripts\python -m pytest -q` (mostre os testes passando).
 
 Termine com 3 frases curtas (pode falar do seu jeito):
 
 *"O lado bom: se um serviço quebra, o resto continua funcionando, e eu posso mexer em um serviço sem mexer nos outros.
 O lado ruim: ficou mais trabalhoso, porque agora são várias peças para subir e configurar, e não uma só.
 No geral, valeu a pena para entender como um sistema maior é organizado."*
+
+---
+
+## Trechos extras (uns 2 minutos): o que o professor pede e faltava
+
+O professor pede estes itens no vídeo. Se o seu vídeo principal não mostra, grave **só estes trechos**
+(sem editar) e envie como um segundo vídeo, ou regrave tudo. Somando os dois, fique entre 4 e 6 minutos.
+
+### Extra A: subir tudo e ver os serviços (30 s)
+
+No terminal, na pasta do projeto:
+
+```powershell
+docker compose ps
+```
+
+*"Subi tudo com um comando só, `docker compose up --build`. Aqui estão os serviços: usuários, inventário,
+chamados, notificações, redis e o gateway. Todos saudáveis. Só o gateway tem porta aberta, a 8000."*
+
+### Extra B: segurança (45 s)
+
+1. Chamada **sem token** (deve mostrar `401`):
+
+```powershell
+curl.exe -i http://localhost:8000/chamados
+```
+
+*"Sem estar logado, o sistema recusa: erro 401."*
+
+2. Entre como **Ana** (solicitante) e tente ver o chamado de **outra pessoa** (o 2 é do Bruno; deve dar `404`):
+
+```powershell
+$t = (Invoke-RestMethod -Method Post -Uri http://localhost:8000/auth/login -ContentType "application/json" -Body '{"email":"ana@empresa.com","senha":"Helpdesk2026"}').access_token
+curl.exe -i -H "Authorization: Bearer $t" http://localhost:8000/chamados/2
+```
+
+*"A Ana é solicitante. Ela só enxerga os chamados dela. O chamado do Bruno nem aparece para ela."*
+
+### Extra C: bancos separados (30 s)
+
+```powershell
+docker volume ls
+docker compose exec chamados ls /dados
+docker compose exec usuarios ls /dados
+```
+
+*"Cada serviço tem o seu próprio volume e o seu próprio arquivo de banco. O chamado não lê o banco do usuário:
+ele pergunta ao serviço de usuários pela rede."*
+
+### Extra D: fechar o chamado (15 s)
+
+Na tela do sistema, no chamado que você resolveu, mude o status para **fechado**.
+
+*"Então o fluxo completo é: abrir, atribuir, resolver e fechar."*
 
 ---
 
