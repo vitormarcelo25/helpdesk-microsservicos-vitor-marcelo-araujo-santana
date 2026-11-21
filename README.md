@@ -1,6 +1,6 @@
 # HelpDesk TI · microsserviços
 
-> 🎥 **Vídeo de demonstração:** _cole aqui o link do YouTube (não listado) ou do Google Drive_
+> 🎥 **Vídeo de demonstração:** https://drive.google.com/file/d/1Xk9gHn_G2Q_ZjuwXvSB9_RNb93K6R8zl/view?usp=sharing
 
 Sistema de chamados de TI (no estilo de um GLPI simplificado) que começou como um **monólito**
 ([helpdesk-ti](https://github.com/prof-filipecavalcante/helpdesk-ti)) e foi separado em **microsserviços**
