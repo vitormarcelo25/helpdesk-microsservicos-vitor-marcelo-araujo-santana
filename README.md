@@ -146,6 +146,16 @@ tamanho) existem em **cada serviço**, e os de **resiliência** (timeout, 503, d
 9. **A tela não mudou de endereço.** Continua em `/`, falando com a mesma API; o gateway serve a tela e a API na porta 8000.
    Duas melhorias pequenas: mostra no topo o estado de cada serviço (`/saude`) e guarda a última lista de equipamentos
    enquanto o Inventário está fora do ar.
+10. **Melhorias além do desafio.** Fiz três melhorias de produto, cada uma no lugar certo da arquitetura:
+    - **Busca e filtro de chamados.** `GET /chamados?busca=texto&status=aberto` procura no título e na descrição, sem diferenciar
+      maiúsculas. A busca fica no serviço de Chamados, que é o dono dos dados, e a tela só monta a consulta (com um pequeno atraso
+      de 300 ms enquanto a pessoa digita, para não sobrecarregar o serviço). Os caracteres `%` e `_` são escapados, para que a busca seja
+      sempre por texto e nunca um padrão montado pelo usuário; o tamanho do termo é limitado a 100 caracteres.
+    - **Painel mais útil.** `GET /chamados/painel` agora devolve também os chamados por prioridade, os críticos ainda abertos
+      e os concluídos. Quem coordena a equipe vê de cara o que é urgente. Como é só um cálculo sobre os chamados, não precisou de
+      chamada a outros serviços.
+    - **Tema claro/escuro.** Melhoria só da tela (gateway): o botão alterna o tema, respeita a preferência do sistema e guarda
+      a escolha no navegador. Nenhum serviço foi alterado, o que mostra a vantagem de separar a tela da API.
 
 ## O que mudou em relação ao monólito
 
@@ -198,6 +208,8 @@ Todas exigem login, exceto `/auth/login`, `/saude` e a tela.
 | PATCH | `/chamados/{id}/status` | Muda o status | Técnico e admin (solicitante: fechar ou reabrir) |
 | POST | `/chamados/{id}/comentarios` | Comenta no chamado | Envolvidos |
 | GET | `/notificacoes` | Minhas notificações | Logado |
+| POST / GET | `/chamados` | Abre (com equipamento opcional) / lista (filtros `status`, `tecnico_id` e `busca`) | Logado (solicitante vê só os seus) |
+| GET | `/chamados/painel` | Totais por status, por prioridade, atrasados, críticos abertos e concluídos | Logado |
 
 Regras mantidas: SLA (crítica 4 h, alta 8 h, média 24 h, baixa 72 h) e transições
 `aberto → em atendimento → resolvido → fechado` (resolvido pode ser reaberto).

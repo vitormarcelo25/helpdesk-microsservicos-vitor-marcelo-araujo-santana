@@ -20,7 +20,7 @@ from app.chamados.esquemas import ChamadoCriar, ComentarioCriar
 from app.chamados.modelos import Chamado, Comentario
 from app.erros import NaoEncontrado, RegraDeNegocio, SemPermissao
 
-# Prazo para resolver o chamado, conforme a prioridade (SLA)
+#     # Melhoria: chamados por prioridade, críticos ainda abertos e total de concluídos
 HORAS_SLA = {"critica": 4, "alta": 8, "media": 24, "baixa": 72}
 
 # De qual status para quais status um chamado pode ir
